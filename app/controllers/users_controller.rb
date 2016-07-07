@@ -20,7 +20,7 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
     if @user.save
       @user.send_activation_email
-      flash[:info] = "Please check your email to activate your account."
+      flash[:info] = "Please check your email to activate your account. You should receive the email within five minutes. The email service provider that this app uses is not instant."
       redirect_to root_url
     else
       render 'new'
