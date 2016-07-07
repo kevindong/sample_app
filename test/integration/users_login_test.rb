@@ -3,6 +3,7 @@ require 'test_helper'
 class UsersLoginTest < ActionDispatch::IntegrationTest
   def setup
     @user = users(:michael)
+    @unactivated_user = users(:unactivated)
   end
   
   test "login with invalid information" do
@@ -51,11 +52,19 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
   
   test "login with remembering" do
     log_in_as(@user, remember_me: '1')
-    assert_equal cookies['remember_token'], assigns(:user).remember_token
+    assert_not_nil cookies['remember_token']
   end
 
   test "login without remembering" do
     log_in_as(@user, remember_me: '0')
     assert_nil cookies['remember_token']
+  end
+  
+  test "users index should not display if user is unactivated" do
+    get users_path
+    assert_redirected_to login_path
+    log_in_as(@unactivated_user, remember_me: '0')
+    assert_redirected_to root_path
+    assert_not flash.empty?
   end
 end
